@@ -23,7 +23,7 @@ var KINVEY_CONST = require("kinveyConstants").constants;
 //
 // SEE HOW WE HAVE REQUIRED THE LIBRARY FILE AND UTILZED THE
 // INFORMATION FROM THAT FILE
-console.log(KINVEY_CONST.constants.url);
+console.log(KINVEY_CONST.url);
 
 exports.definition = {
 	config : {
