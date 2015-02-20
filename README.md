@@ -135,5 +135,7 @@ devicesCollection.fetch({
 	}
 });
 ````
-#####Binding the the Data in `index.xml`
+#####Binding the the Data in `index.xml` View
+
+#####Responding to Events in `index.xml` View
 
