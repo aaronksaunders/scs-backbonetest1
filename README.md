@@ -1,4 +1,4 @@
-##Sample Appcelerator Alloy Mobile Project
+##Sample Appcelerator Alloy Mobile Project for Howard U SCS Cross-Platform Mobile App Dev Class
 
 * Project is based off of the default 2 Tab template available in Titanium Studio.
 * Project is a sample demonstrating the use of a restApi sync adapter along with Model/Collection Databinding to a TableView
@@ -91,20 +91,49 @@ _.extend(Model.prototype, {
 This code is extending the default object to include/override the existing function with a new function to provide the base url. Additional infomation on [`baseUrl`](http://backbonejs.org/#Collection-url) can be found in the [BackboneJS Documentation](http://backbonejs.org/)
 
 #####Extend the Model to Specify Authorization Header
+For this example, we are authenticating our API calls with Basic Auth using the headers; This is not the recommended apporoach, but meets the needs of this sample.
 
-This code can be placed in the controller and would need to be used everytime you wanted to access a collection, but from a design approach it might be better to keep the code in the model.
+BackboneJS allows for specifying the headers before the request is made by setting the `beforeSend` property with a function to call before sending the request. We will use that property to call a function that will set the authentication header.
 
-What we have done is extend the model with a function to set the headers on the request. BackboneJS allows for specifying the headers before the request is made by setting the `beforeSend` property with a function to call before sending the request. We will use that property to call a function that will set the authentication header
+The code for the function to set the headers can be placed in the controller and would need to be used everytime you wanted to access a collection, but from a design approach it might be better to keep the code in the model.
 
+What we have done is extend the model with a function to set the headers on the request. The function is added here, in the controller code, you will see how it is utilized.
 
-----------------------------------
-Stuff our legal folk make us say:
+````Javascript
+_.extend(Collection.prototype, {
+	// extended functions and properties go here
+	/**
+	 * a function for setting the header when requests are made.
+	 *
+	 * @param {Object} xhr
+	 */
+	setHeader : function(xhr) {
+		xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+	},
+});
+````
+#####Fetching the Data in `index.js`
+In the index controller we can now create a new `Devices` collection by using the `Alloy.instance` function'
 
-Appcelerator, Appcelerator Titanium and associated marks and logos are 
-trademarks of Appcelerator, Inc. 
+`var devicesCollection = Alloy.Collections.instance("Devices")`
 
-Titanium is Copyright (c) 2008-2013 by Appcelerator, Inc. All Rights Reserved.
+this will get the existing collection or create a new collection based on the information in the Devices model .js file.
 
-Titanium is licensed under the Apache Public License (Version 2). Please
-see the LICENSE file for the full license.
+Now that we have a `devicesCollection` object now lets call the `fetch` method to get the data associated with the collection. The data associated with the collection will be returned as model objects. Remember though that we need to set the header for the authentication by using the function we added to the collection.
+
+See the BackboneJS [`Collection.fetch`](http://backbonejs.org/#Collection-fetch) documentation for additonal information of fetch and the associated options.
+
+````Javascript
+devicesCollection.fetch({
+	beforeSend : devicesCollection.setHeader, // the function from the extended collection
+	success : function(collection, response, option) {
+		// dump the results from the fetch to the console
+		console.log("Collection Response: " + JSON.stringify(collection, null, 2));
+	},
+	error : function(collection, response, option) {
+		console.log('ERROR ' + collection);
+	}
+});
+````
+#####Binding the the Data in `index.xml`
 
