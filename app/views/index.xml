@@ -1,0 +1,8 @@
+<Alloy>
+	<Collection src="Devices" />
+	<Window class="container">
+		<TableView dataCollection="Devices">
+			<TableViewRow title="{first_col}"></TableViewRow>
+		</TableView>
+	</Window>
+</Alloy>
