@@ -136,4 +136,5 @@ devicesCollection.fetch({
 });
 ````
 #####Binding the the Data in `index.xml`
+[Alloy Data-Binding Documentation](http://docs.appcelerator.com/titanium/3.0/#!/guide/Alloy_Data_Binding)
 
