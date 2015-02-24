@@ -35,7 +35,7 @@ exports.definition = {
 
 			// collection name property, not really needed when using
 			// the REST API sync adapter
-			collection_name : "Devices"
+			collection_name : "devices"
 		}
 	},
 	/**

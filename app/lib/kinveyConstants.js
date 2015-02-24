@@ -6,5 +6,5 @@
  */
 exports.constants = {
 	url : 'https://baas.kinvey.com/appdata/kid_-JeiCLZM5/Devices',
-	basicAuthValue : 'Basic a2lkXy1KZWlDTFpNAwMGQ5ZDBmNjY2OA=='
+	basicAuthValue : 'Basic a2lkXy1KZWlDTFpNNTphMGFkOTliY2RhMDE0YzFkYWQyNDAwMGQ5ZDBmNjY2OA=='
 };

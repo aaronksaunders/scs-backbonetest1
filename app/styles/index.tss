@@ -1,15 +1,33 @@
 ".container": {
-	backgroundColor:"white"
+	backgroundColor: "white"
 }
-
+"TableView": {
+	separatorColor: 'transparent'
+}
+"#listRow":{
+	layout: 'horizontal',
+	width: "100%",
+	height: 'auto',
+	selectionStyle: "NONE"
+},
 "Label": {
 	width: Ti.UI.SIZE,
 	height: Ti.UI.SIZE,
-	color: "#000"
-}
-
-"#label": {
+	color: "red",
 	font: {
-		fontSize: 12
+		fontSize: '28dp'
 	}
 }
+"#rowContainer":{
+	borderColor: "#cacdd8",
+	borderRadius: 3,
+	borderWidth: 1,
+	left: "5dp",
+	top: "5dp",
+	right: "5dp",
+	bottom: "5dp",
+	height: Ti.UI.SIZE,
+	width: Ti.UI.FILL,
+	backgroundColor: "#fff",
+	layout: "vertical"
+},

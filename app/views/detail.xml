@@ -1,0 +1,13 @@
+<Alloy>
+	<Model src="device" id="device" instance="true" />
+	<Window class="container" id="detailWindow">
+		<ActionBar displayHomeAsUp="true" 
+			onHomeIconItemSelected="closeWindow" 
+			platform="android"/>
+		<RightNavButtons  platform="ios">
+			<Button systemButton="Ti.UI.iPhone.SystemButton.DONE" 
+				onClick="closeWindow" />
+		</RightNavButtons>
+		<Label color="black" text="{$.device.first_col}"></Label>
+	</Window>
+</Alloy>

@@ -1,12 +1,8 @@
+var selectedItem = Alloy.Models.device;
 
-
-
-$.index.open();
-
-
-var devicesCollection = Alloy.Collections.instance("Devices");
-devicesCollection.fetch({
-	beforeSend : devicesCollection.setHeader,
+var deviceCollection = Alloy.Collections.instance("device");
+deviceCollection.fetch({
+	beforeSend : deviceCollection.setHeader,
 	success : function(collection, response, option) {
 		console.log("Collection Response: " + JSON.stringify(collection, null, 2));
 	},
@@ -16,13 +12,51 @@ devicesCollection.fetch({
 });
 
 /**
-devicesCollection.getAll({
-	success : function(_r, _c) {
-		console.log("Collection Response: " + JSON.stringify(_r, null, 2));
-	},
-	error : function(_r2, _c2) {
-		console.log(_r);
-	}
-});
+ devicesCollection.getAll({
+ success : function(_r, _c) {
+ console.log("Collection Response: " + JSON.stringify(_r, null, 2));
+ },
+ error : function(_r2, _c2) {
+ console.log(_r);
+ }
+ });
 
-*/
+ */
+
+function doOnTableViewClick(_event) {
+
+	// use the 'index' property from the event to determine
+	// which model from the collection was selected
+	var currentItem = deviceCollection.at(_event.index);
+	
+	// log for debugging purposes and convert object to 
+	// string that is readable
+	console.log(JSON.stringify(currentItem, null, 2));
+
+	// create the new controller and pass in the
+	// model object as an argument 'item'
+	var ctrl = Alloy.createController('detail', {
+		'item' : currentItem
+	});
+}
+
+/**
+ *
+ * @param {Object} evt
+ */
+function doOpen(evt) {
+	if (OS_ANDROID) {
+	}
+}
+
+//
+// Need to handle opening the windows based on the platform
+// Since on IOS we need the NavigationWindow opened first and
+// on android we do not.
+if (OS_IOS) {
+	Alloy.Globals.navWindow = $.getView();
+
+	Alloy.Globals.navWindow.open();
+} else {
+	$.getView().open();
+}
