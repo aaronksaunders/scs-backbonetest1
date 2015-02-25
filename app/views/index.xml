@@ -5,9 +5,6 @@
 	<NavigationWindow id="nav" formFactor="handheld" platform="ios">
 		<Window id="mainWindow" class="container">
 			<TableView dataCollection="device" onClick="doOnTableViewClick">
-				<!-- simple row
-				<TableViewRow title="{first_col}"></TableViewRow>
-				-->
 				<!-- complex row -->
 				<TableViewRow id="listRow">
 					<View id="rowContainer">

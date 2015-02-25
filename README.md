@@ -136,9 +136,31 @@ devicesCollection.fetch({
 });
 ````
 #####Binding the the Data in `index.xml`  View
-[Alloy Data-Binding Documentation](http://docs.appcelerator.com/titanium/3.0/#!/guide/Alloy_Data_Binding)
 
+Explaining the index.xml [(click to open in fullscreen)](screens/explaining-the-index-xml.png)
+
+![index.xml](screens/explaining-the-index-xml.png)
+
+[Alloy Data-Binding Documentation](http://docs.appcelerator.com/titanium/3.0/#!/guide/Alloy_Data_Binding)
 
 #####Responding to Events in `index.xml` View
 
+The click event listener is on the `TableView` so sense event bubble up, we will get the click events on all of the rows and we only need to create one listner instead of putting a listener on each row.
+````Javascript
+function doOnTableViewClick(_event) {
 
+	// use the 'index' property from the event to determine
+	// which model from the collection was selected
+	var currentItem = deviceCollection.at(_event.index);
+	
+	// log for debugging purposes and convert object to 
+	// string that is readable
+	console.log(JSON.stringify(currentItem, null, 2));
+
+	// create the new controller and pass in the
+	// model object as an argument 'item'
+	var ctrl = Alloy.createController('detail', {
+		'item' : currentItem
+	});
+}
+````
