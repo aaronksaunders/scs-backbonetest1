@@ -137,7 +137,7 @@ devicesCollection.fetch({
 ````
 #####Binding the the Data in `index.xml`  View
 
-Explaining the index.xml [(click to open in fullscreen)](screens/explaining-the-index-xml.png)
+Explaining the index.xml [(click to open in fullscreen)](https://raw.githubusercontent.com/aaronksaunders/scs-backbonetest1/master/screens/explaining-the-index-xml.png)
 
 ![index.xml](screens/explaining-the-index-xml.png)
 
