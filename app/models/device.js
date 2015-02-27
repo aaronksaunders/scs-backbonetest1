@@ -35,7 +35,9 @@ exports.definition = {
 
 			// collection name property, not really needed when using
 			// the REST API sync adapter
-			collection_name : "devices"
+			collection_name : "devices",
+
+			"idAttribute" : "_id"
 		}
 	},
 	/**
@@ -48,7 +50,22 @@ exports.definition = {
 				return KINVEY_CONST.url;
 			},
 			authSave : function(_options) {
-				this.save({},_.extend(_options, {
+				this.save({}, _.extend(_options, {
+					beforeSend : function(xhr) {
+						xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+					}
+				}));
+			},
+			/**
+			 *
+			 */
+			authFetch : function(_modelId, _options) {
+				// set the id on the object, in this situation, "this" is the
+				// current model object
+				this[this.idAttribute] = _modelId;
+				
+				// get the object
+				this.fetch(_.extend(_options, {
 					beforeSend : function(xhr) {
 						xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
 					}

@@ -40,28 +40,52 @@ function doOnTableViewClick(_event) {
 	});
 }
 
-// create a new model and save it
-//1) create a model object
-var deviceModel = Alloy.Models.instance("device");
+/**
+ * 
+ */
+function sampleOfFetchingAModel() {
+	var deviceModel = Alloy.Models.instance("device");
+	var modelID = "54e0d1d502f817bc0600442a";
+	
+	deviceModel.authFetch(modelID, {
+		success : function(_r, _c) {
+			// log the output
+			console.log("deviceModel.fetch: " + JSON.stringify(_r, null, 2));
+		},
+		error : function(_r2, _c2) {
+			// log an error
+			console.log("Error- deviceModel.fetch " + _r);
+		}
+	});
+}
 
-// 2) set attributes on the model
-deviceModel.set({
-	"first_col" : "Added from Appcelerator",
-	"second_col" : "So we begin",
-});
+/**
+ *
+ */
+function sampleOfSavingAModel() {
+	// create a new model and save it
+	//1) create a model object
+	var deviceModel = Alloy.Models.instance("device");
 
-// 3) save the model using the extended helper function created
-// to encapsulate the kinvey authentication in the model object
-deviceModel.authSave({
-	success : function(_r, _c) {
-		// log the output
-		console.log("deviceModel.save: " + JSON.stringify(_r, null, 2));
-	},
-	error : function(_r2, _c2) {
-		// log an error
-		console.log("Error- deviceModel.save " + _r);
-	}
-});
+	// 2) set attributes on the model
+	deviceModel.set({
+		"first_col" : "Added from Appcelerator",
+		"second_col" : "So we begin",
+	});
+
+	// 3) save the model using the extended helper function created
+	// to encapsulate the kinvey authentication in the model object
+	deviceModel.authSave({
+		success : function(_r, _c) {
+			// log the output
+			console.log("deviceModel.save: " + JSON.stringify(_r, null, 2));
+		},
+		error : function(_r2, _c2) {
+			// log an error
+			console.log("Error- deviceModel.save " + _r);
+		}
+	});
+}
 
 /**
  *
@@ -83,3 +107,8 @@ if (OS_IOS) {
 } else {
 	$.getView().open();
 }
+
+
+sampleOfFetchingAModel();
+
+
