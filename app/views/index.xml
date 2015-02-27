@@ -4,7 +4,7 @@
 	<!-- We need the navigation window container when using IOS -->
 	<NavigationWindow id="nav" formFactor="handheld" platform="ios">
 		<Window id="mainWindow" class="container">
-			<TableView dataCollection="device" onClick="doOnTableViewClick">
+			<TableView id="tableView" dataCollection="device" onClick="doOnTableViewClick">
 				<!-- complex row -->
 				<TableViewRow id="listRow">
 					<View id="rowContainer">
@@ -20,7 +20,7 @@
 	<!-- need to add the doOpen function to setup menus and such -->
 	<Window id="mainWindow" class="container" onOpen="doOpen" platform="android">
 		<ActionBar/>
-		<TableView dataCollection="device" onClick="doOnTableViewClick">
+		<TableView id="tableView" dataCollection="device" onClick="doOnTableViewClick">
 			<TableViewRow title="{first_col}"></TableViewRow>
 		</TableView>
 	</Window>

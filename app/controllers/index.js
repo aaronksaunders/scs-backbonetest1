@@ -28,8 +28,8 @@ function doOnTableViewClick(_event) {
 	// use the 'index' property from the event to determine
 	// which model from the collection was selected
 	var currentItem = deviceCollection.at(_event.index);
-	
-	// log for debugging purposes and convert object to 
+
+	// log for debugging purposes and convert object to
 	// string that is readable
 	console.log(JSON.stringify(currentItem, null, 2));
 
@@ -39,6 +39,29 @@ function doOnTableViewClick(_event) {
 		'item' : currentItem
 	});
 }
+
+// create a new model and save it
+//1) create a model object
+var deviceModel = Alloy.Models.instance("device");
+
+// 2) set attributes on the model
+deviceModel.set({
+	"first_col" : "Added from Appcelerator",
+	"second_col" : "So we begin",
+});
+
+// 3) save the model using the extended helper function created
+// to encapsulate the kinvey authentication in the model object
+deviceModel.authSave({
+	success : function(_r, _c) {
+		// log the output
+		console.log("deviceModel.save: " + JSON.stringify(_r, null, 2));
+	},
+	error : function(_r2, _c2) {
+		// log an error
+		console.log("Error- deviceModel.save " + _r);
+	}
+});
 
 /**
  *

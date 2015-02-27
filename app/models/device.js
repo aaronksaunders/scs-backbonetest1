@@ -46,6 +46,13 @@ exports.definition = {
 			// extended functions and properties go here
 			url : function() {
 				return KINVEY_CONST.url;
+			},
+			authSave : function(_options) {
+				this.save({},_.extend(_options, {
+					beforeSend : function(xhr) {
+						xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+					}
+				}));
 			}
 		});
 

@@ -135,6 +135,30 @@ devicesCollection.fetch({
 	}
 });
 ````
+#####Style & Layout of `index.xml` View Using `index.tss`
+
+Items that start with a period like `.container` define a class that can be assigned to any object in the view
+````css
+".container": {
+	backgroundColor: "white"
+}
+````
+Items that are Titanium UI object can be styled by creating an entry using the object name. In the example below `TableView` defines a class that will be assigned to any `TableView` object in the view
+````css
+"TableView": {
+	separatorColor: 'transparent'
+}
+````
+Items can be styled specifically by using the item id in the `.tss` file. The entry below reflects a object with the id `#listRow` that will be styled using the information provided.
+````css
+"#listRow":{
+	layout: 'horizontal',
+	width: "100%",
+	height: 'auto',
+	selectionStyle: "NONE"
+}
+````
+
 #####Binding the the Data in `index.xml`  View
 
 Explaining the index.xml [(click to open in fullscreen)](https://raw.githubusercontent.com/aaronksaunders/scs-backbonetest1/master/screens/explaining-the-index-xml.png)
@@ -145,7 +169,15 @@ Explaining the index.xml [(click to open in fullscreen)](https://raw.githubuserc
 
 #####Responding to Events in `index.xml` View
 
-The click event listener is on the `TableView` so sense event bubble up, we will get the click events on all of the rows and we only need to create one listner instead of putting a listener on each row.
+The click event listener is on the `TableView` so since events bubble up, we will get the click events on all of the rows and we only need to create one listner instead of putting a listener on each row.
+
+We define our event listener on the object, `doOnTableViewClick` in the `index.xml` view but we could also defined the event listener in the javascript like this.
+
+````Javascript
+$.tableView.addEventListener('click', doOnTableViewClick);
+````
+if you use this approach, please be certain to remove the event listener when exiting/closing the controller
+
 ````Javascript
 function doOnTableViewClick(_event) {
 
@@ -163,4 +195,53 @@ function doOnTableViewClick(_event) {
 		'item' : currentItem
 	});
 }
+````
+#####Saving new Models
+
+Extended the default `device` model object to handle the Kinvey authentication by creating a new save method called `authSave` which will set the authentication header on the http request which is required by Kinvey.
+
+The extended model code in `app\models\device.js` looks like this
+````Javascript
+extendModel : function(Model) {
+	_.extend(Model.prototype, {
+		// extended functions and properties go here
+		url : function() {
+			return KINVEY_CONST.url;
+		},
+		authSave : function(_options) {
+			this.save({},_.extend(_options, {
+				beforeSend : function(xhr) {
+					xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+				}
+			}));
+		}
+	});
+
+	return Model;
+},
+````
+In our application we can create a new object by following the steps outlined in the code below.
+````Javascript
+// create a new model and save it
+//1) create a model object
+var deviceModel = Alloy.Models.instance("device");
+
+// 2) set attributes on the model
+deviceModel.set({
+	"first_col" : "Added from Appcelerator",
+	"second_col" : "So we begin",
+});
+
+// 3) save the model using the extended helper function created
+// to encapsulate the kinvey authentication in the model object
+deviceModel.authSave({
+	success : function(_model, _responseText) {
+		// log the output
+		console.log("deviceModel.save: " + JSON.stringify(_model, null, 2));
+	},
+	error : function(_model, _responseText) {
+		// log an error
+		console.log("Error- deviceModel.save " + _responseText);
+	}
+});
 ````
