@@ -73,7 +73,10 @@ config : {
 
 		// collection name property, not really needed when using
 		// the REST API sync adapter
-		collection_name : "Devices"
+		collection_name : "devices"
+
+		// the field in the object that represents the id
+		idAttribute : "_id"		
 	}
 },
 ````
@@ -112,7 +115,7 @@ _.extend(Collection.prototype, {
 	},
 });
 ````
-#####Fetching the Data in `index.js`
+#####Fetching the Collection Data in `index.js`
 In the index controller we can now create a new `Devices` collection by using the `Alloy.instance` function'
 
 `var devicesCollection = Alloy.Collections.instance("Devices")`
@@ -134,6 +137,59 @@ devicesCollection.fetch({
 		console.log('ERROR ' + collection);
 	}
 });
+````
+We can extend the collection model to make it easier to fetch the data without always specifying the header informtion in your controller code. We will extend the Collection object to set the `beforeSend` property for you when you use the new function `Collection.getAll`. All the other parameters and options are the same as the default `fetch` function call.
+
+````Javascript
+/**
+ * a helper function to simplify the fetching of the collection and hiding
+ * the complexity setting the headers on each request
+ *
+ * @param {Object} _options
+ */
+getAll : function(_options) {
+	this.fetch(_.extend(_options, {
+		beforeSend : this.setHeader
+	}));
+}
+````
+#####Fetching the Model Data in `index.js`
+If you have a data Collection already, `deviceCollection`, you can fetch the data using the models array provided by the collection by simply getting the item index a accessing the item directly.
+````Javascript
+var currentItem = deviceCollection.at(_event.index);
+````
+The other method is to fetch the model object directly using the `model.id` and the sync adapter. To make this work in an efficiecnt manner, we will extend the Device model to have an authenticated `fetch` function similar to what we did for the collection, the difference here is that we will need to provide a `model.id` for the function.
+````Javascript
+authFetch : function(_modelId, _options) {
+	// set the id on the object, in this situation, "this" is the
+	// current model object
+	this[this.idAttribute] = _modelId;
+
+	// get the object
+	this.fetch(_.extend(_options, {
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+		}
+	}));
+},
+````
+then in your controller you can access the model like so. When the method is completed, the variable `deviceModel` will hold all of the properties from the server request for the model with the specified id.
+````Javascript
+function sampleOfFetchingAModel() {
+	var deviceModel = Alloy.Models.instance("device");
+	var modelID = "54e0d1d502f817bc0600442a";
+
+	deviceModel.authFetch(modelID, {
+		success : function(_r, _c) {
+			// log the output
+			console.log("deviceModel.fetch: " + JSON.stringify(_r, null, 2));
+		},
+		error : function(_r2, _c2) {
+			// log an error
+			console.log("Error- deviceModel.fetch " + _r);
+		}
+	});
+}
 ````
 #####Style & Layout of `index.xml` View Using `index.tss`
 
@@ -166,6 +222,47 @@ Explaining the index.xml [(click to open in fullscreen)](https://raw.githubuserc
 ![index.xml](screens/explaining-the-index-xml.png)
 
 [Alloy Data-Binding Documentation](http://docs.appcelerator.com/titanium/3.0/#!/guide/Alloy_Data_Binding)
+
+#####Data Transformation in `index.xml` View
+The data that we get back from Kinvey provides date information, but it is not is a nice format for display.
+````Javascript
+"_kmd": {
+	"lmt": "2015-02-15T17:05:25.709Z",
+	"ect": "2015-02-15T17:05:25.709Z"
+}
+````
+You will need to transform the date object into someting more presentable. This first change is to add a `dataTransformation` function called `transform` to the `view.xml`. Find the `TableView` element and add the function.
+````XML
+<TableView id="tableView" dataCollection="device" 
+	onClick="doOnTableViewClick" 
+	dataTransform="transform">
+</TableView>
+````
+You will need the corresponding function added to the `index.js` file to actually transform the data. When the tableView is being rendered, each model object in the collection will be passed to this function for transformation, this where you will tranform the data for display. We used the [moment.js](http://momentjs.com/) library for formatting the date.
+````Javascript
+/**
+ * used to transform the model for easier output on the UI.
+ * 
+ * this specifically was need to get the last modified date and the
+ * creation date.
+ * 
+ * be sure to require moment.js in the controller
+ * 
+ *    var moment = require('moment');
+ *
+ * @param {Object} _model
+ */
+function transform(_model) {
+	var transform = _model.toJSON();
+	return {
+		first_col : transform.first_col,
+		second_col : transform.second_col,
+		
+		// format the date using moment library
+		lastModified : moment(transform._kmd.lmt).format('MMMM Do YYYY, h:mm:ss a'),
+	};
+}
+````
 
 #####Responding to Events in `index.xml` View
 
@@ -220,7 +317,7 @@ extendModel : function(Model) {
 	return Model;
 },
 ````
-In our application we can create a new object by following the steps outlined in the code below.
+In our application we can create a new object by following the steps outlined in the code below and using the new method that was added to the model `Model.authSave`.
 ````Javascript
 // create a new model and save it
 //1) create a model object
@@ -244,4 +341,14 @@ deviceModel.authSave({
 		console.log("Error- deviceModel.save " + _responseText);
 	}
 });
+````
+We can continue to add custom functions to our model to support saving, updating and deleting the model objects. This is an example of the removal of an object. Take a look in the source code for the examples of the other model functionality.
+````Javascript
+authDelete : function(_options) {
+	this.remove({}, _.extend(_options, {
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+		}
+	}));
+},
 ````
