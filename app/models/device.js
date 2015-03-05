@@ -37,7 +37,8 @@ exports.definition = {
 			// the REST API sync adapter
 			collection_name : "devices",
 
-			"idAttribute" : "_id"
+			// the field in the object that represents the id
+			idAttribute : "_id"
 		}
 	},
 	/**
@@ -63,9 +64,24 @@ exports.definition = {
 				// set the id on the object, in this situation, "this" is the
 				// current model object
 				this[this.idAttribute] = _modelId;
-				
+
 				// get the object
 				this.fetch(_.extend(_options, {
+					beforeSend : function(xhr) {
+						xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+					}
+				}));
+			},
+			/**
+			 *
+			 */
+			authDelete : function(_modelId, _options) {
+				// set the id on the object, in this situation, "this" is the
+				// current model object
+				this[this.idAttribute] = _modelId;
+
+				// get the object
+				this.remove(_.extend(_options, {
 					beforeSend : function(xhr) {
 						xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
 					}

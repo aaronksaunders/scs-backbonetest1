@@ -18,6 +18,11 @@
 		fontSize: '28dp'
 	}
 }
+".date" : {
+	font: {
+		fontSize: '16dp'
+	}	
+}
 "#rowContainer":{
 	borderColor: "#cacdd8",
 	borderRadius: 3,

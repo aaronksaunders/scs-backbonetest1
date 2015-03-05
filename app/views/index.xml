@@ -4,11 +4,14 @@
 	<!-- We need the navigation window container when using IOS -->
 	<NavigationWindow id="nav" formFactor="handheld" platform="ios">
 		<Window id="mainWindow" class="container">
-			<TableView id="tableView" dataCollection="device" onClick="doOnTableViewClick">
+			<TableView id="tableView" dataCollection="device" 
+				onClick="doOnTableViewClick" 
+				dataTransform="transform">
 				<!-- complex row -->
 				<TableViewRow id="listRow">
 					<View id="rowContainer">
 						<Label top="5dp">{first_col}</Label>
+						<Label class="date">{lastModified}</Label>
 						<Label bottom="5dp">{second_col}</Label>
 					</View>
 				</TableViewRow>
