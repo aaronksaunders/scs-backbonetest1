@@ -138,7 +138,7 @@ devicesCollection.fetch({
 	}
 });
 ````
-We can extend the collection model to make it easier to fetch the data without always specifying the header informtion in your controller code. We will extend the Collection object to set the `beforeSend` property for you when you use the new function `Collection.getAll`. All the other parameters and options are the same as teh default `fectch` function call.
+We can extend the collection model to make it easier to fetch the data without always specifying the header informtion in your controller code. We will extend the Collection object to set the `beforeSend` property for you when you use the new function `Collection.getAll`. All the other parameters and options are the same as the default `fetch` function call.
 
 ````Javascript
 /**
