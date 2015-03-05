@@ -73,7 +73,10 @@ config : {
 
 		// collection name property, not really needed when using
 		// the REST API sync adapter
-		collection_name : "Devices"
+		collection_name : "devices"
+
+		// the field in the object that represents the id
+		idAttribute : "_id"		
 	}
 },
 ````
