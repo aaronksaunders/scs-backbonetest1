@@ -138,6 +138,21 @@ devicesCollection.fetch({
 	}
 });
 ````
+We can extend the collection model to make it easier to fetch the data without always specifying the header informtion in your controller code. We will extend the Collection object to set the `beforeSend` property for you when you use the new function `Collection.getAll`. All the other parameters and options are the same as teh default `fectch` function call.
+
+````Javascript
+/**
+ * a helper function to simplify the fetching of the collection and hiding
+ * the complexity setting the headers on each request
+ *
+ * @param {Object} _options
+ */
+getAll : function(_options) {
+	this.fetch(_.extend(_options, {
+		beforeSend : this.setHeader
+	}));
+}
+````
 #####Style & Layout of `index.xml` View Using `index.tss`
 
 Items that start with a period like `.container` define a class that can be assigned to any object in the view
