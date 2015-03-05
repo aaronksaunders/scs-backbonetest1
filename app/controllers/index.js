@@ -149,6 +149,10 @@ function doOpen(evt) {
  * this specifically was need to get the last modified date and the
  * creation date.
  * 
+ * be sure to require moment.js in the controller
+ * 
+ *    var moment = require('moment');
+ *
  * @param {Object} _model
  */
 function transform(_model) {
