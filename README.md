@@ -223,6 +223,47 @@ Explaining the index.xml [(click to open in fullscreen)](https://raw.githubuserc
 
 [Alloy Data-Binding Documentation](http://docs.appcelerator.com/titanium/3.0/#!/guide/Alloy_Data_Binding)
 
+#####Data Transformation in `index.xml` View
+The data that we get back from Kinvey provides date information, but it is not is a nice format for display.
+````Javascript
+"_kmd": {
+	"lmt": "2015-02-15T17:05:25.709Z",
+	"ect": "2015-02-15T17:05:25.709Z"
+}
+````
+You will need to transform the date object into someting more presentable. This first change is to add a `dataTransformation` function called `transform` to the `view.xml`. Find the `TableView` element and add the function.
+````XML
+<TableView id="tableView" dataCollection="device" 
+	onClick="doOnTableViewClick" 
+	dataTransform="transform">
+</TableView>
+````
+You will need the corresponding function added to the `index.js` file to actually transform the data. When the tableView is being rendered, each model object in the collection will be passed to this function for transformation, this where you will tranform the data for display. We used the [moment.js](http://momentjs.com/) library for formatting the date.
+````Javascript
+/**
+ * used to transform the model for easier output on the UI.
+ * 
+ * this specifically was need to get the last modified date and the
+ * creation date.
+ * 
+ * be sure to require moment.js in the controller
+ * 
+ *    var moment = require('moment');
+ *
+ * @param {Object} _model
+ */
+function transform(_model) {
+	var transform = _model.toJSON();
+	return {
+		first_col : transform.first_col,
+		second_col : transform.second_col,
+		
+		// format the date using moment library
+		lastModified : moment(transform._kmd.lmt).format('MMMM Do YYYY, h:mm:ss a'),
+	};
+}
+````
+
 #####Responding to Events in `index.xml` View
 
 The click event listener is on the `TableView` so since events bubble up, we will get the click events on all of the rows and we only need to create one listner instead of putting a listener on each row.
