@@ -276,16 +276,6 @@ extendModel : function(Model) {
 	return Model;
 },
 ````
-We can continue to add custom functions to our model to support saving, updating and deleting the model objects. This is an example of the saving of the object. Take a look in the source code for the examples of the other model functionality.
-````Javascript
-authSave : function(_options) {
-	this.save({}, _.extend(_options, {
-		beforeSend : function(xhr) {
-			xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
-		}
-	}));
-},
-````
 In our application we can create a new object by following the steps outlined in the code below and using the new method that was added to the model `Model.authSave`.
 ````Javascript
 // create a new model and save it
@@ -310,4 +300,14 @@ deviceModel.authSave({
 		console.log("Error- deviceModel.save " + _responseText);
 	}
 });
+````
+We can continue to add custom functions to our model to support saving, updating and deleting the model objects. This is an example of the removal of an object. Take a look in the source code for the examples of the other model functionality.
+````Javascript
+authDelete : function(_options) {
+	this.remove({}, _.extend(_options, {
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+		}
+	}));
+},
 ````
