@@ -115,7 +115,7 @@ _.extend(Collection.prototype, {
 	},
 });
 ````
-#####Fetching the Data in `index.js`
+#####Fetching the Collection Data in `index.js`
 In the index controller we can now create a new `Devices` collection by using the `Alloy.instance` function'
 
 `var devicesCollection = Alloy.Collections.instance("Devices")`
@@ -151,6 +151,44 @@ getAll : function(_options) {
 	this.fetch(_.extend(_options, {
 		beforeSend : this.setHeader
 	}));
+}
+````
+#####Fetching the Model Data in `index.js`
+If you have a data Collection already, `deviceCollection`, you can fetch the data using the models array provided by the collection by simply getting the item index a accessing the item directly.
+````Javascript
+var currentItem = deviceCollection.at(_event.index);
+````
+The other method is to fetch the model object directly using the `model.id` and the sync adapter. To make this work in an efficiecnt manner, we will extend the Device model to have an authenticated `fetch` function similar to what we did for the collection, the difference here is that we will need to provide a `model.id` for the function.
+````Javascript
+authFetch : function(_modelId, _options) {
+	// set the id on the object, in this situation, "this" is the
+	// current model object
+	this[this.idAttribute] = _modelId;
+
+	// get the object
+	this.fetch(_.extend(_options, {
+		beforeSend : function(xhr) {
+			xhr.setRequestHeader("Authorization", KINVEY_CONST.basicAuthValue);
+		}
+	}));
+},
+````
+then in your controller you can access the model like so. When the method is completed, the variable `deviceModel` will hold all of the properties from the server request for the model with the specified id.
+````Javascript
+function sampleOfFetchingAModel() {
+	var deviceModel = Alloy.Models.instance("device");
+	var modelID = "54e0d1d502f817bc0600442a";
+
+	deviceModel.authFetch(modelID, {
+		success : function(_r, _c) {
+			// log the output
+			console.log("deviceModel.fetch: " + JSON.stringify(_r, null, 2));
+		},
+		error : function(_r2, _c2) {
+			// log an error
+			console.log("Error- deviceModel.fetch " + _r);
+		}
+	});
 }
 ````
 #####Style & Layout of `index.xml` View Using `index.tss`
