@@ -4,6 +4,9 @@
 * Project is a sample demonstrating the use of a restApi sync adapter along with Model/Collection Databinding to a TableView
 * The project is connected to a Kinvey Datasource back end. See [Kinvey](www.kinvey.com) to setup a free account to fully utilize this application
 * This code should run successfully on IOS and Android using the Appcelerator 3.5.0 SDK
+* Concepts here are meant to be a introductory guide to concepts covered in my book on Appcelerator Alloy and Appcelerator Cloud Services
+
+![text](screens/small_book_cover.png)
 
 ____
 ###Getting Started
