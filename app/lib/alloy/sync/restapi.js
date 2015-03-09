@@ -3,9 +3,16 @@ function InitAdapter() {
 	return {};
 }
 
+/*
+ * this function makes the actual HTTP request to the server
+ * utilizing the options that were passed in from the sync
+ * call.
+ *
+ * the _callback parameter is the function that will be called
+ * when the http request is fulfilled with a response from the
+ * server
+ */
 function apiCall(_options, _callback) {
-
-	_options.preventActivityIndicator = true;
 
 	var xhr = Ti.Network.createHTTPClient({
 		timeout : ONE_MINUTE / 2
@@ -43,8 +50,9 @@ function apiCall(_options, _callback) {
 		});
 		Ti.API.error("Error Text::" + xhr.responseText);
 	};
-	for (var header in _options.headers)
-	xhr.setRequestHeader(header, _options.headers[header]);
+	for (var header in _options.headers) {
+		xhr.setRequestHeader(header, _options.headers[header]);
+	}
 	_options.beforeSend && _options.beforeSend(xhr);
 
 	Ti.API.debug("_options.url: " + _options.url);
@@ -59,7 +67,17 @@ function apiCall(_options, _callback) {
 	}
 }
 
+/**
+ * this call maps the BackboneJS calls to the specific HTTP verbs
+ * so that the proper http request can be made
+ *
+ * @param {Object} method
+ * @param {Object} model
+ * @param {Object} opts
+ */
 function Sync(method, model, opts) {
+
+	// map method to HTTP VERB
 	var methodMap = {
 		create : "POST",
 		read : "GET",
@@ -67,9 +85,18 @@ function Sync(method, model, opts) {
 		"delete" : "DELETE"
 	};
 	var type = methodMap[method];
+
+	// set all of the opts to  the local variable
 	var params = _.extend({}, opts);
+
+	// allow for overriding the HTTP verb
 	params.type = params.type || type;
+
+	// get the headers or set them to an empty set
 	params.headers = params.headers || {};
+
+	// get the url for the request from the parameters or
+	// check to see if it was provided by the model
 	if (!params.url) {
 		params.url = model && model.url && model.url();
 		if (!params.url) {
@@ -77,6 +104,8 @@ function Sync(method, model, opts) {
 			return;
 		}
 	}
+
+	// for legacy support - not applicable in most scenarios
 	if (Alloy.Backbone.emulateJSON) {
 		params.contentType = "application/x-www-form-urlencoded";
 		params.processData = true;
@@ -84,6 +113,8 @@ function Sync(method, model, opts) {
 			model : params.data
 		} : {};
 	}
+
+	// if the API does not support PUT and DELETE it is handled here
 	if (Alloy.Backbone.emulateHTTP && ("PUT" === type || "DELETE" === type)) {
 		Alloy.Backbone.emulateJSON && (params.data._method = type);
 		params.type = "POST";
@@ -91,7 +122,12 @@ function Sync(method, model, opts) {
 			params.headers["X-HTTP-Method-Override"] = type;
 		};
 	}
+
+	// a catch to deal with old issue with Android HTTP library
 	!Ti.Android && (params.headers["Content-Type"] = "application/json; charset=utf-8");
+
+	// local/private function for handle  the response from
+	// the server
 	var callbackOptions = function(_resp) {
 		if (_resp.success) {
 			params.success(_resp.data || _resp.text, _resp.text);
@@ -107,7 +143,7 @@ function Sync(method, model, opts) {
 	};
 
 	// if there is a model id then set the id on the URL
-	// we are assuming the endpoint follows the normal REST API
+	// we are assuming the end point follows the normal REST API
 	// convention
 	debugger;
 	var modelId = (model[model.idAttribute] || model.get(model.idAttribute));
@@ -115,9 +151,13 @@ function Sync(method, model, opts) {
 		params.url = params.url + '/' + modelId;
 	}
 
+	// if the JSON object to be persisted is provided as a parameter,
+	//then use that data and NOT the data in the actual model
 	if (opts.JSON) {
 		params.data = model.toJSON();
-	} else if (opts.data || !model || "create" != method && "update" != method) {
+	} else
+	// add the data to the query string NOT the body of the request
+	if (opts.data || !model || "create" != method && "update" != method) {
 		if (opts.data) {
 			var query = "";
 			for (var i in opts.data) {
@@ -126,13 +166,16 @@ function Sync(method, model, opts) {
 			params.url += "?" + query.substring(0, query.length - 1);
 			params.data = null;
 		}
-	} else {
+	} else
+	// add the data to the body of the request
+	{
 		params.data = JSON.stringify(model.toJSON());
 	}
 
 	// display the URL to be used for API call
 	Ti.API.debug("THE URL " + params.url);
 
+	// make the appropriate API call
 	switch (method) {
 	case "delete":
 	case "update":
