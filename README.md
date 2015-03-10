@@ -8,6 +8,8 @@
 
 ![text](screens/small_book_cover.png)
 
+#####[Available On Amazon.com](http://www.amazon.com/Building-Cross-Platform-Titanium-Appcelerator-Services/dp/1118673255)
+
 ____
 ###Getting Started
 Please setup your constants by modifying the file [`kinveyConstants.js`](app\lib\kinveyConstants.js) in the `app\lib` directory of your project
